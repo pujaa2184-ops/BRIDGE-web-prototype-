@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRIDGE - Mobile Web App</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #1d4ed8;
+            --secondary: #38bdf8;
+            --accent: #ff9900;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray: #64748b;
+        }
+
+        body {
+            background-color: #020617;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* --- APP CONTAINER --- */
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            max-height: 850px;
+            background-color: var(--white);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* LOGO STYLING WITH BRIDGE ARC */
+        .bridge-logo {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .bridge-logo-text {
+            position: relative;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1e3a8a;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .bridge-logo-text .dot-i {
+            color: var(--secondary);
+            display: inline-block;
+            margin: 0 -1px;
+        }
+
+        /* Arc Jembatan SVG Overlay */
+        .bridge-arc-svg {
+            position: absolute;
+            top: 2px;
+            left: 20px;
+            width: 110px;
+            height: 25px;
+            pointer-events: none;
+        }
+
+        .logo-underline {
+            width: 80px;
+            height: 3px;
+            background: #1e3a8a;
+            border-radius: 2px;
+            margin-top: 4px;
+        }
+
+        /* APP HEADER */
+        .app-header {
+            background: linear-gradient(135deg, #1e3a8a, #0284c7);
+            color: var(--white);
+            padding: 12px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .app-header .bridge-logo-text {
+            font-size: 1.5rem;
+            color: #ffffff;
+            justify-content: center;
+        }
+
+        .app-header .bridge-arc-svg {
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 20px;
+        }
+
+        .app-header p {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        /* SCREEN CONTENT AREA */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--light);
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            padding: 15px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* WELCOME / ONBOARDING SCREEN */
+        #welcome-screen {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px 20px;
+            overflow-y: auto;
+            background: linear-gradient(rgba(255, 255, 255, 0.92), rgba(240, 249, 255, 0.95)), 
+                        url('https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
+        }
+
+        .logo-box {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .logo-tagline {
+            font-size: 0.78rem;
+            color: #1e3a8a;
+            font-weight: 600;
+            line-height: 1.3;
+            max-width: 90%;
+            margin: 8px auto 0 auto;
+        }
+
+        .works-container {
+            margin: 15px 0;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 15px;
+            border-radius: 14px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .works-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        .work-step {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .step-num {
+            width: 26px;
+            height: 26px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-info h5 {
+            font-size: 0.83rem;
+            color: var(--dark);
+        }
+
+        .step-info p {
+            font-size: 0.74rem;
+            color: var(--gray);
+            line-height: 1.3;
+        }
+
+        .flow-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #1d4ed8;
+            background: #eff6ff;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px dashed #bfdbfe;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .flow-visual i { font-size: 0.6rem; color: var(--gray); }
+
+        /* BOTTOM NAVIGATION BAR */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--white);
+            border-top: 1px solid #e2e8f0;
+            padding: 10px 0;
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--gray);
+            font-size: 0.75rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 33%;
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 3px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* UI COMPONENTS */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border: 1px solid #f1f5f9;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--primary); color: var(--white); }
+        .btn-secondary { background: #0284c7; color: var(--white); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+
+        /* FEATURE 1: HELP UI & COMPANION SELECTION */
+        .help-heading {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .help-subheading {
+            font-size: 0.78rem;
+            color: var(--gray);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        /* COMPANION SELECTION CARDS */
+        .companion-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .companion-card:hover, .companion-card.selected {
+            border-color: var(--primary);
+            background: #f0f7ff;
+        }
+
+        .companion-card h5 {
+            font-size: 0.88rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .companion-card p {
+            font-size: 0.74rem;
+            color: var(--gray);
+            line-height: 1.3;
+        }
+
+        .call-options-box {
+            display: none;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed #cbd5e1;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .call-options-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        /* FULLSCREEN REALISTIC CALL OVERLAY */
+        .call-fullscreen-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #0f172a;
+            z-index: 300;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 20px;
+            color: white;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .video-call-view {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+        }
+
+        .cc-main-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-pip-video {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 95px;
+            height: 135px;
+            border-radius: 12px;
+            border: 2px solid white;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        .call-info-top {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .call-info-top h4 { font-size: 1.1rem; font-weight: 600; }
+        .call-info-top p { font-size: 0.8rem; color: #cbd5e1; }
+
+        .voice-avatar-large {
+            position: relative;
+            z-index: 3;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 4px solid var(--secondary);
+            margin: auto;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+            overflow: hidden;
+        }
+
+        .voice-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .call-controls-bottom {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+
+        .ctrl-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .ctrl-btn.active-off {
+            background: #ffffff;
+            color: var(--dark);
+        }
+
+        .ctrl-btn-end {
+            width: 65px;
+            height: 65px;
+            background: #ef4444;
+            color: white;
+            font-size: 1.6rem;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 400;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .transcript-preview {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.82rem;
+            margin-bottom: 15px;
+        }
+
+        .transcript-line { margin-bottom: 8px; text-align: left; }
+        .transcript-line strong { color: var(--primary); }
+
+        /* FEATURE 2 & 3 COMPONENTS */
+        .video-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
+        .video-item { display: flex; gap: 12px; background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #f1f5f9; cursor: pointer; }
+        .video-thumbnail { width: 110px; height: 75px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
+        .video-thumbnail i { font-size: 1.8rem; color: white; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .video-info { flex: 1; padding: 8px 10px 8px 0; display: flex; flex-direction: column; justify-content: center; }
+        .video-info h6 { font-size: 0.82rem; color: var(--dark); line-height: 1.2; margin-bottom: 4px; }
+        .video-info span { font-size: 0.7rem; color: var(--gray); }
+        .expression-item { background: #f8fafc; border-left: 3px solid var(--secondary); padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+        .expression-item .en { font-weight: 600; font-size: 0.85rem; color: var(--dark); }
+        .expression-item .id { font-size: 0.78rem; color: var(--gray); font-style: italic; margin-top: 2px; }
+
+        .tips-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid #16a34a;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .tips-box h6 { font-size: 0.82rem; color: #15803d; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .tips-box p { font-size: 0.76rem; color: #166534; line-height: 1.4; }
+
+        .other-situations-container {
+            border: 1.5px dashed #93c5fd;
+            border-radius: 12px;
+            padding: 12px;
+            background: #f0f7ff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .other-situations-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .other-situations-sub { font-size: 0.72rem; color: var(--gray); margin-bottom: 10px; }
+        .situations-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .sit-chip {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .sit-chip:hover { border-color: var(--primary); color: var(--primary); }
+
+        #screen-practice { padding: 0; height: 100%; }
+        .practice-start-container { padding: 15px; }
+        .situation-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+        .situation-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px 15px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .situation-card:hover { border-color: var(--primary); background: #f0f7ff; }
+        .situation-icon { width: 40px; height: 40px; border-radius: 10px; background: #e0f2fe; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .situation-text h5 { font-size: 0.85rem; color: var(--dark); }
+        .situation-text p { font-size: 0.72rem; color: var(--gray); }
+
+        .practice-game-ui { display: none; width: 100%; height: 100%; background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%); flex-direction: column; justify-content: space-between; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 5; }
+        .game-top-bar { background: var(--white); border-bottom: 1px solid #e2e8f0; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; }
+        .badge-bridge { background: #e0f2fe; color: var(--primary); padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
+        .mascot-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
+        .mascot-avatar-frame { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--primary); background: #fff; overflow: hidden; margin: 0 auto; }
+        .mascot-avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .mascot-nametag { background: var(--primary); color: white; font-size: 0.75rem; font-weight: 600; padding: 3px 12px; border-radius: 12px; display: inline-block; margin-top: -12px; position: relative; z-index: 2; }
+        .game-speech-bubble { background: var(--white); color: var(--dark); padding: 14px 18px; border-radius: 16px; border: 1px solid #cbd5e1; max-width: 90%; font-size: 0.85rem; line-height: 1.4; text-align: center; margin-top: 15px; }
+        .game-bottom-controls { background: var(--white); padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; border-top-left-radius: 20px; border-top-right-radius: 20px; }
+        .mic-btn-container { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- 0. WELCOME / ONBOARDING SCREEN -->
+        <div id="welcome-screen">
+            <div class="logo-box">
+                <div class="bridge-logo">
+                    <div class="bridge-logo-text">
+                        BR<span class="dot-i">i</span>DGE
+                        <svg class="bridge-arc-svg" viewBox="0 0 100 30">
+                            <path d="M 10 25 Q 50 -5 90 25" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="logo-underline"></div>
+                </div>
+                <div class="logo-tagline">Your Bridge to Better Communication and Global Opportunities</div>
+            </div>
+
+            <div class="works-container">
+                <div class="works-title">How BRIDGE works:</div>
+                
+                <div class="work-step">
+                    <div class="step-num">1</div>
+                    <div class="step-info">
+                        <h5>HELP</h5>
+                        <p>Need help communicating with a foreign customer? Get real-time support from a Communication Companion.</p>
+                    </div>
+                </div>
+
+                <div class="work-step">
+                    <div class="step-num">2</div>
+                    <div class="step-info">
+                        <h5>LEARN</h5>
+                        <p>Learn from your communication needs. Learn useful expressions and tips based on real business situations.</p>
+                    </div>
+                </div>
+
+                <div class="work-step">
+                    <div class="step-num">3</div>
+                    <div class="step-info">
+                        <h5>PRACTICE</h5>
+                        <p>Ready to try it yourself? Practice business conversations with AI.</p>
+                    </div>
+                </div>
+
+                <div class="flow-visual">
+                    HELP <i class="fas fa-arrow-right"></i> LEARN <i class="fas fa-arrow-right"></i> PRACTICE <i class="fas fa-arrow-right"></i> Communicate Independently
+                </div>
+            </div>
+
+            <div>
+                <p style="text-align: center; font-size: 0.78rem; color: #1e293b; margin-bottom: 8px; font-weight: 500;">Start your journey with BRIDGE</p>
+                <button class="btn btn-primary" onclick="closeWelcomeScreen()">
+                    Explore BRIDGE <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- APP HEADER -->
+        <div class="app-header">
+            <div class="bridge-logo">
+                <div class="bridge-logo-text">
+                    BR<span class="dot-i">i</span>DGE
+                    <svg class="bridge-arc-svg" viewBox="0 0 100 30">
+                        <path d="M 10 25 Q 50 -5 90 25" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+            <p>MSME English Communication Platform</p>
+        </div>
+
+        <!-- APP CONTENT AREA -->
+        <div class="app-content">
+            
+            <!-- SCREEN 1: HELP FEATURE -->
+            <div id="screen-help" class="screen active">
+                <div class="card">
+                    <h2 class="help-heading">Communication Companion</h2>
+                    <p class="help-subheading">Choose a companion based on your needs.</p>
+                    
+                    <!-- Pilihan 1: Volunteer Companion -->
+                    <div class="companion-card" id="card-volunteer" onclick="selectCompanionType('volunteer')">
+                        <h5>🆓 Volunteer Communication Companion</h5>
+                        <p>Free assistance from available volunteers.</p>
+                    </div>
+
+                    <!-- Pilihan 2: Paid Companion -->
+                    <div class="companion-card" id="card-paid" onclick="selectCompanionType('paid')">
+                        <h5>💼 Paid Communication Companion</h5>
+                        <p>Professional-style assistance through paid sessions.</p>
+                    </div>
+
+                    <!-- Container Pilihan Voice/Video Call (Muncul setelah memilih jenis companion) -->
+                    <div class="call-options-box" id="call-options-box">
+                        <div class="call-options-title" id="selected-type-title">Select Call Type</div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="startCall('voice')">
+                                <i class="fas fa-phone-alt"></i> Voice Call
+                            </button>
+                            <button class="btn btn-secondary" onclick="startCall('video')">
+                                <i class="fas fa-video"></i> Video Call
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TRANSCRIPT CARD -->
+                <div class="card" id="transcript-card" style="display: none;">
+                    <h4 style="color: var(--primary); margin-bottom: 8px;"><i class="fas fa-file-alt"></i> Conversation Transcript</h4>
+                    <p style="font-size: 0.78rem; color: var(--gray); margin-bottom: 12px;">Transcribed from your recent HELP session with Putu Kirana:</p>
+                    
+                    <div class="transcript-preview">
+                        <div class="transcript-line"><strong>Foreign Client:</strong> "Hi, I want to order 100 units of your handicraft. Can I get a discount?"</div>
+                        <div class="transcript-line"><strong>You (with CC Help):</strong> "Hello! Thank you. We can offer a 5% discount for bulk orders."</div>
+                        <div class="transcript-line"><strong>Foreign Client:</strong> "Sounds good! How about the shipping time to Australia?"</div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="switchTab('learn')">
+                        <i class="fas fa-arrow-right"></i> Proceed to LEARN Feature
+                    </button>
+                </div>
+            </div>
+
+            <!-- FULLSCREEN CALL OVERLAY -->
+            <div id="call-fullscreen" class="call-fullscreen-overlay">
+                <div id="video-call-backdrop" class="video-call-view" style="display: none;">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" alt="Putu Kirana CC Video" class="cc-main-video">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="User Video PIP" class="user-pip-video">
+                </div>
+
+                <div class="call-info-top">
+                    <h4 id="call-companion-name">Putu Kirana (CC)</h4>
+                    <p id="call-status-subtitle">Connecting...</p>
+                </div>
+
+                <div id="voice-call-backdrop" class="voice-avatar-large">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Putu Kirana Voice Avatar">
+                </div>
+
+                <div class="call-controls-bottom">
+                    <button class="ctrl-btn" id="btn-toggle-mic" onclick="toggleCallControl('mic')">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    
+                    <button class="ctrl-btn ctrl-btn-end" onclick="triggerEndCallModal()">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+
+                    <button class="ctrl-btn" id="btn-toggle-cam" onclick="toggleCallControl('cam')">
+                        <i class="fas fa-video"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MODAL: ASK TO LEARN AFTER CALL -->
+            <div class="modal-overlay" id="learn-modal">
+                <div class="modal-card">
+                    <i class="fas fa-lightbulb" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px;"></i>
+                    <h4>Sensing a Learning Opportunity!</h4>
+                    <p style="font-size: 0.82rem; color: var(--gray); margin: 10px 0 20px 0;">
+                        Would you like to review the conversation transcript and learn English tailored to this interaction?
+                    </p>
+                    <button class="btn btn-primary" onclick="confirmLearn(true)">
+                        <i class="fas fa-check"></i> Yes, Show Transcript & Learn
+                    </button>
+                    <button class="btn btn-outline" onclick="confirmLearn(false)" style="margin-top: 8px;">
+                        No, Maybe Later
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: LEARN FEATURE -->
+            <div id="screen-learn" class="screen">
+                <div class="card">
+                    <h3 style="margin-bottom: 8px; color: var(--primary);"><i class="fas fa-graduation-cap"></i> LEARN Feature</h3>
+                    <p style="font-size: 0.82rem; color: var(--gray); margin-bottom: 15px;">
+                        Materials auto-tailored from your recent negotiation call.
+                    </p>
+
+                    <h5 style="margin-bottom: 10px; color: var(--dark);">Short Learning Videos:</h5>
+                    <div class="video-grid">
+                        <div class="video-item" onclick="playVideoModal('Price Negotiation Masterclass')">
+                            <div class="video-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1556742049-0a67965304e6?auto=format&fit=crop&w=300&q=80');">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            <div class="video-info">
+                                <h6>Negotiation: Offering & Accepting Prices</h6>
+                                <span><i class="far fa-clock"></i> 3 mins • Business English</span>
+                            </div>
+                        </div>
+
+                        <div class="video-item" onclick="playVideoModal('Handling Bulk Order Requests')">
+                            <div class="video-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=300&q=80');">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            <div class="video-info">
+                                <h6>Handling Bulk Orders & Discounts</h6>
+                                <span><i class="far fa-clock"></i> 4 mins • MSME Essentials</span>
+                            </div>
+                        </div>
+
+                        <div class="video-item" onclick="playVideoModal('How to Reject Low Offers Politely')">
+                            <div class="video-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80');">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            <div class="video-info">
+                                <h6>How to Reject Low Offers Politely</h6>
+                                <span><i class="far fa-clock"></i> 2.5 mins • Communication</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 style="margin-top: 15px; margin-bottom: 10px; color: var(--dark);">Useful Expressions (Ungkapan Penting):</h5>
+                    
+                    <div class="expression-item">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="en">"We can offer a 5% discount for bulk purchases."</div>
+                                <div class="id">"Kami dapat memberikan diskon 5% untuk pembelian jumlah banyak."</div>
+                            </div>
+                            <i class="fas fa-volume-up" style="color: var(--primary); cursor: pointer; margin-left: 10px;" onclick="playFemaleVoice('We can offer a 5 percent discount for bulk purchases')"></i>
+                        </div>
+                    </div>
+
+                    <div class="expression-item">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="en">"This is our best wholesale price."</div>
+                                <div class="id">"Ini adalah harga grosir terbaik kami."</div>
+                            </div>
+                            <i class="fas fa-volume-up" style="color: var(--primary); cursor: pointer; margin-left: 10px;" onclick="playFemaleVoice('This is our best wholesale price')"></i>
+                        </div>
+                    </div>
+
+                    <h5 style="margin-top: 15px; margin-bottom: 10px; color: var(--dark);">Communication Tips (Tips Komunikasi):</h5>
+                    <div class="tips-box">
+                        <h6><i class="fas fa-lightbulb"></i> Pro Tip (Etika Negosiasi):</h6>
+                        <p>Always thank the client first before presenting counter-offers.<br><em>(Selalu ucapkan terima kasih kepada pelanggan terlebih dahulu sebelum menyampaikan penawaran harga balasan.)</em></p>
+                    </div>
+
+                    <div class="other-situations-container">
+                        <div class="other-situations-title">
+                            <i class="fas fa-compass"></i> Want to learn other business situations?
+                        </div>
+                        <p class="other-situations-sub">Pilih situasi bisnis lain untuk dipelajari secara mandiri:</p>
+                        <div class="situations-grid">
+                            <div class="sit-chip" onclick="switchTab('practice')"><i class="fas fa-box-open" style="color: var(--primary);"></i> Describing Products</div>
+                            <div class="sit-chip" onclick="switchTab('practice')"><i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i> Handling Complaints</div>
+                            <div class="sit-chip" onclick="switchTab('practice')"><i class="fas fa-truck" style="color: #0284c7;"></i> Shipping & Logistics</div>
+                            <div class="sit-chip" onclick="switchTab('practice')"><i class="fas fa-credit-card" style="color: #10b981;"></i> Payment Terms</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="switchTab('practice')">
+                        <i class="fas fa-arrow-right"></i> Practice Skills in PRACTICE
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: PRACTICE FEATURE -->
+            <div id="screen-practice" class="screen">
+                <div class="practice-start-container" id="practice-start-view">
+                    <div class="card" style="margin-top: 5px;">
+                        <h3 style="color: var(--primary); margin-bottom: 5px;"><i class="fas fa-comments"></i> AI Voice Practice</h3>
+                        <p style="font-size: 0.8rem; color: var(--gray);">
+                            Pilih situasi bisnis yang ingin Anda simulasikan bersama <strong>Emma</strong> (AI Assistant):
+                        </p>
+
+                        <div class="situation-list">
+                            <div class="situation-card" onclick="selectSituation('How to Describe Products')">
+                                <div class="situation-icon"><i class="fas fa-box-open"></i></div>
+                                <div class="situation-text">
+                                    <h5>How to Describe Products</h5>
+                                    <p>Menjelaskan detail & keunggulan produk</p>
+                                </div>
+                            </div>
+
+                            <div class="situation-card" onclick="selectSituation('How to Negotiate')">
+                                <div class="situation-icon"><i class="fas fa-handshake"></i></div>
+                                <div class="situation-text">
+                                    <h5>How to Negotiate</h5>
+                                    <p>Negosiasi penawaran harga & pesanan besar</p>
+                                </div>
+                            </div>
+
+                            <div class="situation-card" onclick="selectSituation('How to Handle Complaints')">
+                                <div class="situation-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                                <div class="situation-text">
+                                    <h5>How to Handle Complaints</h5>
+                                    <p>Merespons komplain pelanggan dengan sopan</p>
+                                </div>
+                            </div>
+
+                            <div class="situation-card" onclick="selectSituation('How to Explain Prices')">
+                                <div class="situation-icon"><i class="fas fa-tag"></i></div>
+                                <div class="situation-text">
+                                    <h5>How to Explain Prices</h5>
+                                    <p>Menjelaskan struktur & rincian harga</p>
+                                </div>
+                            </div>
+
+                            <div class="situation-card" onclick="selectSituation('How to Explain Delivery Methods')">
+                                <div class="situation-icon"><i class="fas fa-truck"></i></div>
+                                <div class="situation-text">
+                                    <h5>How to Explain Delivery Methods</h5>
+                                    <p>Menjelaskan opsi pengiriman & estimasi waktu</p>
+                                </div>
+                            </div>
+
+                            <div class="situation-card" onclick="selectSituation('How to Discuss Payment Terms')">
+                                <div class="situation-icon"><i class="fas fa-credit-card"></i></div>
+                                <div class="situation-text">
+                                    <h5>How to Discuss Payment Terms</h5>
+                                    <p>Menjelaskan metode pembayaran & DP</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-game-ui" id="practice-game-view">
+                    <div class="game-top-bar">
+                        <div>
+                            <span class="badge-bridge">BRIDGE AI</span>
+                            <span style="margin-left: 5px; font-weight: 600;" id="current-topic-display">Voice Session</span>
+                        </div>
+                        <div style="color: var(--gray); font-size: 0.75rem;">
+                            <i class="fas fa-circle" style="color: #22c55e; font-size: 0.6rem;"></i> Connected
+                        </div>
+                    </div>
+
+                    <div class="mascot-area">
+                        <div class="mascot-card">
+                            <div class="mascot-avatar-frame">
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Emma Mascot">
+                            </div>
+                            <div class="mascot-nametag">Emma • BRIDGE AI</div>
+                        </div>
+                        
+                        <div class="game-speech-bubble" id="mascot-speech">
+                            "Hi! I’m Emma. Let’s practice together. Are you ready to start?"
+                        </div>
+                    </div>
+
+                    <div class="game-bottom-controls">
+                        <p style="color: var(--gray); font-size: 0.78rem; margin-bottom: 10px;">Tap & hold the microphone to speak:</p>
+                        
+                        <div class="mic-btn-container" id="mic-btn" onmousedown="startListening()" onmouseup="stopListening()" ontouchstart="startListening()" ontouchend="stopListening()">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+
+                        <div class="voice-feedback" id="voice-status">Tap & Hold to Speak</div>
+                        
+                        <button class="btn btn-outline" onclick="exitPracticeGame()" style="margin-top: 15px; padding: 8px; font-size: 0.78rem; border-color: #cbd5e1; color: var(--gray);">
+                            <i class="fas fa-arrow-left"></i> Change Situation
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BOTTOM NAVIGATION -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="switchTab('help')" id="nav-help">
+                <i class="fas fa-headset"></i>
+                <span>HELP</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('learn')" id="nav-learn">
+                <i class="fas fa-book-open"></i>
+                <span>LEARN</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('practice')" id="nav-practice">
+                <i class="fas fa-comments"></i>
+                <span>PRACTICE</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        function closeWelcomeScreen() {
+            document.getElementById('welcome-screen').style.display = 'none';
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+
+            document.getElementById('screen-' + tabName).classList.add('active');
+            document.getElementById('nav-' + tabName).classList.add('active');
+        }
+
+        // FUNGSI PILIH VOLUNTEER ATAU PAID COMPANION
+        function selectCompanionType(type) {
+            document.getElementById('card-volunteer').classList.remove('selected');
+            document.getElementById('card-paid').classList.remove('selected');
+
+            const callBox = document.getElementById('call-options-box');
+            const title = document.getElementById('selected-type-title');
+
+            if (type === 'volunteer') {
+                document.getElementById('card-volunteer').classList.add('selected');
+                title.innerText = "Start Call with Volunteer Companion";
+            } else {
+                document.getElementById('card-paid').classList.add('selected');
+                title.innerText = "Start Call with Paid Companion";
+            }
+
+            callBox.style.display = 'block';
+        }
+
+        // SUARA CEWEK BAHASA INDONESIA KHUSUS PUTU KIRANA
+        function playIndonesianFemaleVoice(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.1; // Pitch sedikit tinggi khas wanita
+
+                const voices = window.speechSynthesis.getVoices();
+                const femaleVoice = voices.find(v => 
+                    (v.lang.includes('id') || v.lang.includes('ID'))
+                );
+
+                if (femaleVoice) {
+                    utterance.voice = femaleVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // SUARA CEWEK NATIVE INGGRIS UNTUK EMMA & LEARN
+        function playFemaleVoice(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.95;
+                utterance.pitch = 1.1;
+
+                const voices = window.speechSynthesis.getVoices();
+                const femaleVoice = voices.find(v => 
+                    v.lang.includes('en') && (
+                        v.name.toLowerCase().includes('female') || 
+                        v.name.toLowerCase().includes('zira') || 
+                        v.name.toLowerCase().includes('samantha') || 
+                        v.name.toLowerCase().includes('google us english')
+                    )
+                );
+
+                if (femaleVoice) {
+                    utterance.voice = femaleVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+        }
+
+        // FUNGSI MEMULAI PANGGILAN SAMA PUTU KIRANA
+        let callTimerInterval;
+
+        function startCall(type) {
+            const overlay = document.getElementById('call-fullscreen');
+            const videoBackdrop = document.getElementById('video-call-backdrop');
+            const voiceBackdrop = document.getElementById('voice-call-backdrop');
+            const statusSubtitle = document.getElementById('call-status-subtitle');
+
+            overlay.style.display = 'flex';
+
+            if (type === 'video') {
+                videoBackdrop.style.display = 'block';
+                voiceBackdrop.style.display = 'none';
+            } else {
+                videoBackdrop.style.display = 'none';
+                voiceBackdrop.style.display = 'block';
+            }
+
+            statusSubtitle.innerText = "Connecting...";
+            let seconds = 0;
+
+            setTimeout(() => {
+                statusSubtitle.innerText = "00:00";
+                
+                // Panggil suara cewek untuk Putu Kirana
+                playIndonesianFemaleVoice("Halo, nama saya Putu Kirana. Ada yang bisa saya bantu hari ini?");
+
+                callTimerInterval = setInterval(() => {
+                    seconds++;
+                    const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+                    const secs = String(seconds % 60).padStart(2, '0');
+                    statusSubtitle.innerText = `${mins}:${secs}`;
+                }, 1000);
+            }, 1500);
+        }
+
+        function toggleCallControl(btnType) {
+            const btn = document.getElementById(btnType === 'mic' ? 'btn-toggle-mic' : 'btn-toggle-cam');
+            btn.classList.toggle('active-off');
+        }
+
+        function triggerEndCallModal() {
+            clearInterval(callTimerInterval);
+            document.getElementById('call-fullscreen').style.display = 'none';
+            document.getElementById('learn-modal').style.display = 'flex';
+        }
+
+        function confirmLearn(shouldLearn) {
+            document.getElementById('learn-modal').style.display = 'none';
+            if (shouldLearn) {
+                document.getElementById('transcript-card').style.display = 'block';
+            }
+        }
+
+        function playVideoModal(title) { alert("Playing Video Lesson: " + title); }
+
+        let selectedSituationText = "";
+
+        function selectSituation(situation) {
+            selectedSituationText = situation;
+            document.getElementById('practice-start-view').style.display = 'none';
+            document.getElementById('practice-game-view').style.display = 'flex';
+            document.getElementById('current-topic-display').innerText = situation;
+
+            const greeting = `Hi! I’m Emma. Let’s practice ${situation} together. Are you ready to start?`;
+            document.getElementById('mascot-speech').innerText = `"${greeting}"`;
+            playFemaleVoice(greeting);
+        }
+
+        function exitPracticeGame() {
+            document.getElementById('practice-game-view').style.display = 'none';
+            document.getElementById('practice-start-view').style.display = 'block';
+        }
+
+        function startListening() {
+            document.getElementById('voice-status').innerText = "Listening to your voice...";
+            document.getElementById('voice-status').style.color = "#1d4ed8";
+        }
+
+        function stopListening() {
+            document.getElementById('voice-status').innerText = "Emma is responding...";
+            document.getElementById('voice-status').style.color = "#0284c7";
+
+            setTimeout(() => {
+                let responseText = "Great start! You communicated that very clearly. What would you like to say next?";
+                document.getElementById('mascot-speech').innerText = `"${responseText}"`;
+                playFemaleVoice(responseText);
+                document.getElementById('voice-status').innerText = "Evaluation: Great Pronunciation & Tone!";
+                document.getElementById('voice-status').style.color = "#16a34a";
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
